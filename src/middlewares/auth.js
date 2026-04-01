@@ -1,6 +1,6 @@
 const jwt = require ('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
     const token = req.header('Authorization');
 
     if(!token){
@@ -19,3 +19,14 @@ module.exports = (req, res, next) => {
         return res.status(401).json({ mensaje: "Acceso denegado, token no válido o inexistente" });
     }
 };
+
+const checkRole = (rolesPermitidos) => {
+    return (req, res, next) => {
+        if (!req.usuario || !rolesPermitidos.includes(req.usuario.role)) {
+            return res.status(403).json({ msg: "No tienes los permisos necesarios" });
+        }
+        next();
+    };
+};
+
+module.exports = { auth, checkRole };

@@ -1,16 +1,19 @@
-# URBAN-ALERT
+# 📖 EDUTECH - Backend API 📖
 
-## What is UrbanAlert?
+## What is EDUTECH?
 
-Urban-Alert is a system currently under development that will serve to manage and centralise reports of urban incidents. At present, it allows users to register, authenticate themselves securely and create emergency reports. In addition, it has an intelligent system that automatically classifies the priority of the report (for example, assigning ‘High’ priority if words such as “fire” or ‘blaze’ are detected in the description).
+EDUTECH was created to solve a common problem: in many institutions, the management of resources (classrooms, projectors, laboratories, computer equipment) is chaotic. Teachers and students are constantly making overlapping requests, and administrators have no standardised way of prioritising who needs which resource most urgently.
+
+The Solution: A centralised system where users can request resources in an orderly manner. This system will not only record the booking but also calculate a priority level based on the user’s role, the type of event and how far in advance the booking is made, automatically approving or queuing requests.
 
 ## Technologies Used
 
 * **Node.js**: Runtime environment for the backend.
 * **Express**: Framework for creating and managing API routes.
-* **MongoDB & Mongoose**: NoSQL database and data modelling for storing users and reports.
+* **MongoDB & Mongoose**: NoSQL database and data modelling for storing roles, materials and solicitude.
 * **JWT (JSON Web Tokens)**: For secure authentication and protection of private routes.
 * **Bcrypt**: For secure encryption of user passwords.
+* **Swagger**: For interactive documentation by the endpoints.
 
 ## Installation Guide
 
@@ -18,7 +21,7 @@ Urban-Alert is a system currently under development that will serve to manage an
 Once you have cloned the repository, open your terminal in the project folder and run:
 
 ```bash
-npm install express mongoose dotenv bcrypt jsonwebtoken
+npm install express mongoose dotenv bcrypt jsonwebtoken swagger-jsdoc swagger-ui-express
 ```
 
 This will install each of the libraries needed to run the code.
@@ -34,6 +37,8 @@ This will install each of the libraries needed to run the code.
 * **bcrypt**: It is responsible for hashing **(encrypting)** user passwords for maximum security.
 
 * **jsonwebtoken**: Generate and verify tokens to protect private routes.
+
+* **Swagger** : Generate a screen to use the endpoints of a better way.
 
 ### 2. Environment Variable Configuration
 Create a file named **.env** in the root of your project. This is where you will store sensitive credentials. Add the following variables with your own configuration:
@@ -57,17 +62,29 @@ node index.js
 You will see a message in the console indicating that the connection to MongoDB was successful and the port on which it is running.
 
 ## Main Endpoints
-All base routes are configured under **/api/reportes**.
+The base URL for the API is **http://localhost:3000/api**.
 
-### Authentication (Public Routes)
+### 👤 Users (/api/users)
 ``` POST /api/reportes/register ```: Creates a new user in the database by encrypting their password.
 
-``` POST /api/reportes/login ```: Validates the user's credentials and returns a JWT token valid for 1 hour.
+``` POST /register ```: Registers a new user (requires email, password, first name, surname and role).
 
-### Reports (Protected Routes)
+``` POST /login ```: Validates credentials and returns a JWT token.
 
-**Note:** The JWT must be sent in the request headers (Authorisation: Bearer <your_token>).
+``` GET / ```: Retrieves all users (requires a token).
 
-``` GET /api/reportes/getAllReports ```: Obtains the complete list of all reports generated.
+``` GET /:id, PUT /:id, DELETE /:id ```: Searches for, updates or deletes a specific user.
 
-``` POST /api/reportes/createReports ```: Creates a new report in the system (title, description, location).
+### 🎒 Materials and Resources (/api/materials)
+``` POST /NewMaterial ```: Adds a new resource, specifying title, description, location and status (available/unavailable).
+
+``` GET / ```: Retrieves all registered materials.
+
+``` GET /:id, PUT /:id, DELETE /:id ```: Updates, deletes or Get a material from the system.
+
+### 📝 Requests (/api/solicitude)
+``` POST /NewSolicitude ```: Creates a request (title, description, priority, status, scheduled date). The system automatically sets the priority (low, medium, high).
+
+``` GET / ```: Retrieves all requests.
+
+``` GET /:id, PUT /:id, DELETE /:id ```: Updates, deletes or Get a solicitude from the system.

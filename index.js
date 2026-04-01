@@ -3,9 +3,11 @@ require('dotenv').config();
 const express = require('express');
 //const {createClient}= require('@supabase/supabase-js');
 const connectDB = require('./src/config/database');
-const reportesRoutes = require('./src/routes/reportes');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpecs = require('./src/config/swagger');
+const usuariosRoutes = require('./src/routes/usuarios');
+const materialesRoutes = require('./src/routes/materiales');
+const solicitudesRoutes = require('./src/routes/solicitudes');
+//const swaggerUi = require('swagger-ui-express');
+//const swaggerSpecs = require('./src/config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,12 +15,14 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json()); // Communication
 
 // Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // DB connection
 connectDB();
 
-app.use("/api/reportes", reportesRoutes);
+app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/materials", materialesRoutes);
+app.use("/api/solicitude", solicitudesRoutes);
 
 // Supabase connection
 //const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY)

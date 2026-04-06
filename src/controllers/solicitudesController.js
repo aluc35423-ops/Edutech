@@ -11,8 +11,8 @@ exports.createSolicitudes = async (req, res) => {
             
         }
         const desLower = descripcion.toLowerCase();
-        if (desLower.includes(fecha_programada) || desLower.includes('incendio')){
-            prioridad = "Alta";
+        if (desLower.includes(fecha_programada) || desLower.includes('laboratorio')){
+            prioridad = "alta";
         }
 
         const nuevosolicitudes = new solicitudes({

@@ -4,9 +4,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Urban Alert API',
+      title: 'Edutech API',
       version: '1.0.0',
-      description: 'Documentación de la API de Urban Alert',
+      description: 'Documentación de la API de Edutech',
     },
     servers: [
       {

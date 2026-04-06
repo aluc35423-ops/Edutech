@@ -7,20 +7,22 @@ exports.createSolicitudes = async (req, res) => {
         const {titulo, descripcion, fecha_programada} = req.body;
 
         // Logic
-        let prioridad = {
-            
-        }
-        const desLower = descripcion.toLowerCase();
-        if (desLower.includes(fecha_programada) || desLower.includes('laboratorio')){
-            prioridad = "alta";
-        }
+        let prioridad = "media"
 
-        const nuevosolicitudes = new solicitudes({
+        const desLower = descripcion.toLowerCase();
+
+        const nuevaSolicitud = new solicitudes({
             titulo,
-            descripcion
+            descripcion,
+            prioridad,
+            fecha_programada
         });
 
-        await nuevosolicitudes.save();
+        if (desLower.includes(fecha_programada) || desLower.includes('laboratorio')){
+            prioridad = "alta";
+        };
+
+        await nuevaSolicitud.save();
         res.status(201).json({msg: "Solicitud creada con éxito", solicitud: nuevaSolicitud});
     } catch (error) {
         //Error de envio

@@ -25,7 +25,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 //Rutas base de Edutech
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/materials", materialesRoutes);
-app.use("/api/solicitude", solicitudesRoutes);
+app.use("/api/solicitudes", solicitudesRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servidor de EDUTECH corriendo en: http://localhost:${PORT}`);

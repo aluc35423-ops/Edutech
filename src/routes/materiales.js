@@ -18,8 +18,6 @@ const { auth, checkRole } = require("../middlewares/auth");
  *     tags: [Materiales]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
  *         name: search
  *         schema:
  *           type: string
@@ -45,15 +43,10 @@ router.get("/", auth, materialesController.getMateriales);
  *           schema:
  *             type: object
  *             properties:
- *               titulo:
- *                 type: string
- *                 example: "Proyector EPSON"
- *               descripcion:
- *                 type: string
- *                 example: "HDMI incluido"
- *               ubicacion:
- *                 type: string
- *                 example: "Sala 3"
+ *               titulo: { type: "string", example: "Proyector EPSON" }
+ *               descripcion: { type: "string", example: "HDMI incluido" }
+ *               ubicacion: { type: "string", example: "Sala 3" }
+ *               estado: { type: "string", example: "disponible" }
  *     responses:
  *       201:
  *         description: Material creado
@@ -101,12 +94,10 @@ router.get("/:id", auth, materialesController.getResources);
  *           schema:
  *             type: object
  *             properties:
- *               titulo:
- *                 type: string
- *               descripcion:
- *                 type: string
- *               ubicacion:
- *                 type: string
+ *               titulo: { type: "string", example: "Proyector EPSON 4K" }
+ *               descripcion: { type: "string", example: "Cable HDMI y control incluidos" }
+ *               ubicacion: { type: "string", example: "Sala de Maestros" }
+ *               estado: { type: "string", example: "disponible" }
  *     responses:
  *       200:
  *         description: Material actualizado

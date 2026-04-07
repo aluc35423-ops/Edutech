@@ -26,7 +26,7 @@ router.get("/", auth, checkRole(['staff']), solicitudesController.getSolicitudes
 
 /**
  * @swagger
- * /api/solicitudes:
+ * /api/solicitudes/NewSolicitude:
  *   post:
  *     summary: Crear una solicitud
  *     tags: [Solicitudes]
@@ -53,7 +53,7 @@ router.get("/", auth, checkRole(['staff']), solicitudesController.getSolicitudes
  *       201:
  *         description: Solicitud creada
  */
-router.post("/", auth, checkRole(['staff','profesor','alumno']), solicitudesController.createSolicitudes);
+router.post("/NewSolicitude", auth, checkRole(['staff','profesor','alumno']), solicitudesController.createSolicitudes);
 
 /**
  * @swagger
@@ -128,5 +128,7 @@ router.put("/:id", auth, checkRole(['staff']), solicitudesController.updateSolic
  *         description: Solicitud eliminada
  */
 router.delete("/:id", auth, checkRole(['staff']), solicitudesController.deleteSolicitud);
+
+
 
 module.exports = router;

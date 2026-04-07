@@ -1,51 +1,51 @@
-const solicitudes = require('../models/solicitudes');
-
+const Solicitudes = require('../models/solicitudes');
 
 //Create aone Solicitude
 exports.createSolicitudes = async (req, res) => {
     try {
-        const {titulo, descripcion, fecha_programada} = req.body;
+        const { titulo, descripcion, fecha_programada } = req.body;
 
-        // Logic
-        let prioridad = "media"
-
+        // Lógica de prioridad
+        let prioridad = "baja"; // Prioridad por defecto
         const desLower = descripcion.toLowerCase();
+        
+        if (desLower.includes(fecha_programada) || desLower.includes('laboratorio')) {
+            prioridad = "alta";
+        }
 
-        const nuevaSolicitud = new solicitudes({
+        // Armamos el paquete con TODOS los datos que exige Mongoose
+        const nuevaSolicitud = new Solicitudes({
             titulo,
             descripcion,
+            fecha_programada,
             prioridad,
-            fecha_programada
+            creadoPor: req.usuario.id // Sacamos el ID directamente del token de quien inició sesión
         });
 
-        if (desLower.includes(fecha_programada) || desLower.includes('laboratorio')){
-            prioridad = "alta";
-        };
-
         await nuevaSolicitud.save();
-        res.status(201).json({msg: "Solicitud creada con éxito", solicitud: nuevaSolicitud});
+        res.status(201).json({ msg: "Solicitud creada con éxito", solicitud: nuevaSolicitud });
     } catch (error) {
-        //Error de envio
-        res.status(400).json({error: "Error: Create requests", message: error.message})
-    };
+        // Error de validación
+        res.status(400).json({ error: "Error: Create requests", message: error.message });
+    }
 };
 
 //Get all reports
 //req = request body {} params url?param1=datos123.
 exports.getSolicitudes = async (req, res) => {
     try {
-        const solicitudes = await solicitudes.find();
-        res.json(solicitudes);
+        // Cambiamos el nombre de la variable a listaSolicitudes para no chocar con el modelo
+        const listaSolicitudes = await Solicitudes.find();
+        res.json(listaSolicitudes);
     } catch (error) {
-        //Error general
-        res.status(500).json({error: "Error: Get solicitudes", message: error.message})
+        res.status(500).json({ error: "Error: Get solicitudes", message: error.message });
     }
 };
 
 //GET ONE SOLICITUDE
 exports.getOneSolicitud = async (req, res) => {
     try {
-        const solicitud = await solicitudes.findById(req.params.id);
+        const solicitud = await Solicitudes.findById(req.params.id);
         
         if (!solicitud) {
             return res.status(404).json({ error: "Solicitud no encontrada" });
@@ -62,10 +62,11 @@ exports.updateSolicitud = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
-        const solicitudActualizada = await solicitudes.findByIdAndUpdate(
+        
+        const solicitudActualizada = await Solicitudes.findByIdAndUpdate(
             id,
             updateData,
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         if (!solicitudActualizada) {
@@ -82,7 +83,7 @@ exports.updateSolicitud = async (req, res) => {
 exports.deleteSolicitud = async (req, res) => {
     try {
         const { id } = req.params;
-        const solicitudEliminada = await solicitudes.findByIdAndDelete(id);
+        const solicitudEliminada = await Solicitudes.findByIdAndDelete(id);
 
         if (!solicitudEliminada) {
             return res.status(404).json({ error: "Solicitud no encontrada para eliminar" });

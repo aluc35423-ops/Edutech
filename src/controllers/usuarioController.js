@@ -100,9 +100,9 @@ exports.UpdateOneUser = async (req, res) => {
         const usuario = await Usuario.findByIdAndUpdate(
             req.params.id,
             { $set: updateData },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         ).select('-password');
-
+        
         if (!usuario) {
             return res.status(404).json({ error: "El usuario no encontrado" });
         };

@@ -15,110 +15,77 @@ exports.getMateriales = async (req, res) => {
 //buscamos por nombre del material
 exports.getResources = async (req, res) => {
     try {
-        // 1. Extraemos el parámetro de la URL (Ej: /api/v1/resources?search=hdmi)
-        const { search } = req.query;
-        let query = {};
-
-        if (search) {
-            query.name = { 
-                $regex: search, // Busca que la palabra esté contenida en el nombre
-                $options: 'i' 
+            const resources = await Materiales.findById(req.params.id).select('-password');
+            if (!resources) {
+                return res.status(404).json({ error: "El material no encontrado" });
             };
+            res.json(resources);
+        } catch (error) {
+            res.status(500).json({ msg: "ID no válido", error: error.message });
         }
-        const resources = await Resource.find(query);
-        res.status(200).json({
-            count: resources.length,
-            data: resources
+    const resources = await Materiales.find(query);
+    res.status(200).json({
+        count: resources.length,
+        data: resources
         });
-
-    } catch (error) {
-        res.status(500).json({
-            message: 'Error: Get Materials',
-            error: error.message
-        });
-    }
 };
 
-//anadimos nuevos materiales
+// Añadimos nuevos materiales
 exports.addMateriales = async (req, res) => {
     try {
-        const {titulo, descripcion, classroom} = req.body;
+        const { titulo, descripcion, ubicacion, estado } = req.body;
 
         const nuevoMaterial = new Materiales({
             titulo,
             descripcion,
-            classroom
+            ubicacion,
+            estado: estado || 'disponible',
+            creadoPor: req.usuario.id
         });
 
         await nuevoMaterial.save();
-        res.status(201).json({msg: "Successfully created material", material: nuevoMaterial});
+        res.status(201).json({ msg: "Material creado con éxito", material: nuevoMaterial });
     } catch (error) {
-        //Error de envio
-        res.status(400).json({error: "Error: Create materials", message: error.message})
+        res.status(400).json({ error: "Error al crear el material", message: error.message });
     }
 }
 
-//actualizamos materiales
+// Actualizar material (PUT)
 exports.updateResource = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
 
-        //Buscamos y actualizamos en una sola operación
-        const updatedResource = await Resource.findByIdAndUpdate(
+        // AQUÍ ESTÁ LA CLAVE: Debe decir "Materiales", no "Resource"
+        const updatedResource = await Materiales.findByIdAndUpdate(
             id, 
             updateData, 
-            { 
-                new: true,           // Devuelve el documento modificado, no el original
-                runValidators: true 
-            }
+            { returnDocument: 'after', runValidators: true }
         );
 
-        // Validamos si el recurso realmente existía en la base de datos
         if (!updatedResource) {
-            return res.status(404).json({
-                success: false,
-                message: 'Resource not found. Verify that the ID is correct.'
-            });
+            return res.status(404).json({ success: false, message: 'Material no encontrado. Verifica el ID.' });
         }
 
-        //Si todo salió bien, respondemos con el contrato acordado
-        res.status(200).json({
-            success: true,
-            data: updatedResource
-        });
-
+        res.status(200).json({ success: true, data: updatedResource });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: 'Error processing resource update',
-            error: error.message
-        });
+        res.status(400).json({ success: false, message: 'Error processing resource update', error: error.message });
     }
 };
 
-
+// Eliminar material (DELETE)
 exports.deleteResource = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedResource = await Resource.findByIdAndDelete(id);
+        
+        // AQUÍ TAMBIÉN: Debe decir "Materiales", no "Resource"
+        const deletedResource = await Materiales.findByIdAndDelete(id);
 
         if (!deletedResource) {
-            return res.status(404).json({
-                success: false,
-                message: 'Resource not found. Could not be deleted.'
-            });
+            return res.status(404).json({ success: false, message: 'Material no encontrado. No se pudo eliminar.' });
         }
-        res.status(200).json({
-            success: true,
-            message: 'Resource deleted successfully',
-            data: deletedResource 
-        });
+        res.status(200).json({ success: true, message: 'Material eliminado correctamente', data: deletedResource });
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: 'Error trying to delete resource',
-            error: error.message
-        });
+        res.status(400).json({ success: false, message: 'Error trying to delete resource', error: error.message });
     }
 };
